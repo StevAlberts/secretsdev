@@ -30,8 +30,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isLoading = false;
   List<SecretModel> searchResults = [];
+
+  // initialize meilisearch
   var client = MeiliSearchClient('http://127.0.0.1:7700', 'masterKey');
 
+  // function to search a query
   Future<void> searchSecrets(String _query) async {
     try {
       var index = client.index('secrets');
@@ -50,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // adding dummy data for demo
   void addSecret() async {
     // An index where secrets are stored.
     var index = client.index('secrets');
@@ -69,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
         'secret': 'The Hitchhiker\'s Guide to the Galaxy'
       }
     ];
-
     // Add documents into index we just created.
     var update = await index.addDocuments(documents);
     print(update.updateId); // => { "updateId": 0 }
@@ -93,6 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // building search bar
   Widget buildSearchBar() {
     return FloatingSearchBar(
       hint: 'Search...',
@@ -106,10 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
       debounceDelay: const Duration(milliseconds: 500),
       onQueryChanged: (query) {
         // Call your model, bloc, controller here.
-        if (query.isNotEmpty)
-          searchSecrets(query);
-        else
-          setState(() => isLoading = false);
+        if (query.isNotEmpty) searchSecrets(query);
       },
       onFocusChanged: (isFocused) {
         setState(() => searchResults.clear());
@@ -160,6 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // building app body
   Widget buildBody() {
     return ListView.separated(
       padding: EdgeInsets.symmetric(vertical: 100),
